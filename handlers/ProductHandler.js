@@ -3,6 +3,18 @@ const { db } = require("../helpers");
 const { Product, Subcategory } = db;
 
 class ProductHandler {
+    static async getAllProducts(page, limit) {
+        const offset = (page - 1) * limit;
+
+        const products = await Product.findAll({
+            offset: parseInt(offset),
+            limit: parseInt(limit),
+            order: [["created_at", "DESC"]]
+        });
+
+        return products.map(p => p.get({ plain: true }));
+    }
+
     static async search(categoryId, productName, page, limit) {
         const offset = (page - 1) * limit;
 

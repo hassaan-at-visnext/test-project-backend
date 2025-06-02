@@ -1,6 +1,11 @@
 const ProductHandler = require("../../handlers/ProductHandler");
 
 class ProductManager {
+    static async getAllProducts(page, limit) {
+        console.log(`search:: Fetching all the products...`);
+        return await ProductHandler.getAllProducts(page, limit);        
+    }
+
     static async search( categoryId, productName, page, limit ){
         console.log(`seach:: Fetching product by name ${productName} and category ${categoryId} `);
         return await ProductHandler.search(categoryId, productName, page, limit);

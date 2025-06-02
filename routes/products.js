@@ -6,6 +6,12 @@ const ProductController = require("../app/product/ProductController");
 const PRODUCTS_ROUTES_PREFIX = '/products';
 
 router.get(
+    `${PRODUCTS_ROUTES_PREFIX}/all`,
+    Authentication.Authenticate,
+    ProductController.getAllProducts
+);
+
+router.get(
     `${PRODUCTS_ROUTES_PREFIX}/search/:categoryId`,
     Authentication.Authenticate,
     ProductController.search

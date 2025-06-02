@@ -3,6 +3,35 @@ const { Validators } = require("../../helpers");
 const ProductManager = require("./ProductManager");
 
 class ProductController {
+    static async getAllProducts(req, res) {
+        try {
+            const { page = 1, limit = 10} = req.query;
+
+            const products = await ProductManager.getAllProducts(page, limit);
+
+            if((!products) || products.length === 0) {
+                return res.status(ErrorCodes.SUCCESS).json({
+                    success: true,
+                    message: "No product found",
+                    data: products
+                });
+            }
+
+            return res.status(ErrorCodes.SUCCESS).json({
+                success: true,
+                data: products
+            });
+            
+        } catch (error) {
+             console.log(`getAllProducts:: request to get all product failed. data:: ${error}`);
+
+            return res.status(Validators.validateCode(error.code, ErrorCodes.INTERNAL_SERVER_ERROR)).json({
+                success: false,
+                message: error.reportError ? error.message : ProductConstants.Messages.GET_ALL_PRODUCTS_FAILED
+            });
+        }
+    }
+
     static async search(req, res) {
         try {
             const { productName, page = 1, limit = 10 } = req.query;
@@ -65,7 +94,7 @@ class ProductController {
     static async getByCategory(req, res) {
         try {
             const { categoryId } = req.params;
-            const { page = 1, limit = 10 } = req.query;
+            const { page = 1, limit = 20 } = req.query;
 
             const products = await ProductManager.getByCategory(categoryId, page, limit);
 
