@@ -138,7 +138,7 @@ class ProductController {
             }
 
             return res.status(ErrorCodes.SUCCESS).json({
-                success: false,
+                success: true,
                 data: products
             });
 
