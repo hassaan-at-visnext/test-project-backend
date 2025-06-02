@@ -5,7 +5,7 @@ const ProductManager = require("./ProductManager");
 class ProductController {
     static async getAllProducts(req, res) {
         try {
-            const { page = 1, limit = 10} = req.query;
+            const { page = 1, limit = 20} = req.query;
 
             const products = await ProductManager.getAllProducts(page, limit);
 
