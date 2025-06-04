@@ -14,7 +14,9 @@ class AuthManager {
         let user = await UserHandler.findUserByEmail(data.email);
         AuthUtil.validateUserForSignUp(user);
 
-        data.password = await AuthUtil.createHashedPassword(data.password);
+        const decryptedPassword = AuthUtil.decryptPassword(data.password);
+
+        data.password = await AuthUtil.createHashedPassword(decryptedPassword);
         user = await UserHandler.createUser(data);
 
         user = await AuthManager.setToken(user);
@@ -28,8 +30,10 @@ class AuthManager {
         let user = await UserHandler.findUserByEmail(data.email);
         AuthUtil.validateUserForLogin(user);
 
-        const PasswordMatched = await bcrypt.compare(data.password, user.password);
-        if(! PasswordMatched ) {
+        const decryptedPassword = AuthUtil.decryptPassword(data.password);
+
+        const PasswordMatched = await bcrypt.compare(decryptedPassword, user.password);
+        if (!PasswordMatched) {
             console.log(`login:: Password does not match.`);
             throw new Exception(UserConstants.Messages.PASSWORD_DOESNOT_MATCH, ErrorCodes.UNAUTHORIZED, { reportError: true }).toJson();
         }
@@ -37,7 +41,7 @@ class AuthManager {
         // AuthUtil.validatePasswordForLogin(data.password, user.password);
 
         user = await AuthManager.setToken(user);
-        return user;      
+        return user;
 
     }
 

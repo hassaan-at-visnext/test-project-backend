@@ -1,6 +1,7 @@
 const { UserConstants, ErrorCodes } = require('../constants');
 const { Validators, bcrypt } = require('../helpers');
 const Exception = require('../helpers/Exceptions');
+const CryptoJS = require('crypto-js');
 
 class AuthUtil {
 
@@ -85,6 +86,14 @@ class AuthUtil {
         }
     }
 
+     static decryptPassword(encryptedPassword) {
+        const secretKey = 'my-secret-key';
+
+        const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey);
+        const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
+
+        return originalPassword;
+    }
 
 }
 

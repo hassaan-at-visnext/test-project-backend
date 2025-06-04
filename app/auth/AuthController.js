@@ -31,7 +31,8 @@ class AuthContoller {
 
             return res.status(ErrorCodes.SUCCESS).json({
                 success: true,
-                data: user.login_token
+                data: user.login_token,
+                name: user.first_name
             });
 
         } catch (error) {
