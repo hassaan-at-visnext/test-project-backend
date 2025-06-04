@@ -5,25 +5,66 @@ const ProductManager = require("./ProductManager");
 class ProductController {
     static async getAllProducts(req, res) {
         try {
-            const { page = 1, limit = 20} = req.query;
+            const {
+                page = 1,
+                limit = 20,
+                product_certifications,
+                supplier_certifications,
+                manufacturer_location,
+                stock_availability_in_us
+            } = req.query;
 
-            const products = await ProductManager.getAllProducts(page, limit);
+            // Normalize product_certifications
+            let productCerts = [];
+            if (typeof product_certifications === 'string') {
+                productCerts = product_certifications.split(',');
+            } else if (Array.isArray(product_certifications)) {
+                productCerts = product_certifications;
+            }
 
-            if((!products) || products.length === 0) {
+            // Normalize supplier_certifications
+            let supplierCerts = [];
+            if (typeof supplier_certifications === 'string') {
+                supplierCerts = supplier_certifications.split(',');
+            } else if (Array.isArray(supplier_certifications)) {
+                supplierCerts = supplier_certifications;
+            }
+
+            // Parse stock availability
+            let stockAvailability = null;
+            if (stock_availability_in_us === 'true') stockAvailability = true;
+            else if (stock_availability_in_us === 'false') stockAvailability = false;
+
+            const result = await ProductManager.getAllProducts(
+                parseInt(page),
+                parseInt(limit),
+                productCerts,
+                supplierCerts,
+                manufacturer_location,
+                stockAvailability
+            );
+
+            if ((!result) || result.length === 0) {
                 return res.status(ErrorCodes.SUCCESS).json({
                     success: true,
                     message: "No product found",
-                    data: products
+                    data: result,
+                    totalPages: 0,
+                    totalItems: 0
                 });
             }
 
             return res.status(ErrorCodes.SUCCESS).json({
                 success: true,
-                data: products
+                data: result.data,
+                page: result.pagination.page,
+                limit: result.pagination.limit,
+                totalPages: result.pagination.totalPages,
+                totalItems: result.pagination.totalItems
             });
-            
+
         } catch (error) {
-             console.log(`getAllProducts:: request to get all product failed. data:: ${error}`);
+            console.log(`getAllProducts:: request to get all product failed. data:: ${error}`);
 
             return res.status(Validators.validateCode(error.code, ErrorCodes.INTERNAL_SERVER_ERROR)).json({
                 success: false,
@@ -37,14 +78,14 @@ class ProductController {
             const { productName, page = 1, limit = 10 } = req.query;
             const { categoryId } = req.params;
 
-            const products = await ProductManager.search( categoryId, productName, page, limit );
+            const products = await ProductManager.search(categoryId, productName, page, limit);
 
             if ((!products) || products.length === 0) {
-                 return res.status(ErrorCodes.SUCCESS).json({
-                success: true,
-                message: "No product found",
-                data: products
-            });
+                return res.status(ErrorCodes.SUCCESS).json({
+                    success: true,
+                    message: "No product found",
+                    data: products
+                });
             }
 
             return res.status(ErrorCodes.SUCCESS).json({
@@ -94,21 +135,60 @@ class ProductController {
     static async getByCategory(req, res) {
         try {
             const { categoryId } = req.params;
-            const { page = 1, limit = 20 } = req.query;
+            const {
+                page = 1,
+                limit = 20,
+                product_certifications,
+                supplier_certifications,
+                manufacturer_location,
+                stock_availability_in_us
+            } = req.query;
 
-            const products = await ProductManager.getByCategory(categoryId, page, limit);
+            let productCerts = [];
+            if (typeof product_certifications === 'string') {
+                productCerts = product_certifications.split(',');
+            } else if (Array.isArray(product_certifications)) {
+                productCerts = product_certifications;
+            }
 
-            if (products.length === 0) {
+            let supplierCerts = [];
+            if (typeof supplier_certifications === 'string') {
+                supplierCerts = supplier_certifications.split(',');
+            } else if (Array.isArray(supplier_certifications)) {
+                supplierCerts = supplier_certifications;
+            }
+
+            let stockAvailability = null;
+            if (stock_availability_in_us === 'true') stockAvailability = true;
+            else if (stock_availability_in_us === 'false') stockAvailability = false;
+
+            const result = await ProductManager.getByCategory(
+                categoryId,
+                parseInt(page),
+                parseInt(limit),
+                productCerts,
+                supplierCerts,
+                manufacturer_location,
+                stockAvailability
+            );
+
+            if ((!result) || result.data.length === 0) {
                 return res.status(ErrorCodes.SUCCESS).json({
                     success: true,
                     message: "No products found for this category.",
-                    data: []
+                    data: [],
+                    totalPages: 0,
+                    totalItems: 0
                 });
             }
 
             return res.status(ErrorCodes.SUCCESS).json({
                 success: true,
-                data: products
+                data: result.data,
+                page: result.pagination.page,
+                limit: result.pagination.limit,
+                totalPages: result.pagination.totalPages,
+                totalItems: result.pagination.totalItems
             });
 
         } catch (error) {
@@ -125,21 +205,63 @@ class ProductController {
     static async getBySubcategory(req, res) {
         try {
             const { subcategoryId } = req.params;
-            const { page = 1, limit = 10 } = req.query;
+            const {
+                page = 1,
+                limit = 10,
+                product_certifications,
+                supplier_certifications,
+                manufacturer_location,
+                stock_availability_in_us
+            } = req.query;
 
-            const products = await ProductManager.getBySubcategory(subcategoryId, page, limit);
+            // Normalize product_certifications
+            let productCerts = [];
+            if (typeof product_certifications === 'string') {
+                productCerts = product_certifications.split(',');
+            } else if (Array.isArray(product_certifications)) {
+                productCerts = product_certifications;
+            }
 
-            if (products.length === 0) {
+            // Normalize supplier_certifications
+            let supplierCerts = [];
+            if (typeof supplier_certifications === 'string') {
+                supplierCerts = supplier_certifications.split(',');
+            } else if (Array.isArray(supplier_certifications)) {
+                supplierCerts = supplier_certifications;
+            }
+
+            // Parse stock availability
+            let stockAvailability = null;
+            if (stock_availability_in_us === 'true') stockAvailability = true;
+            else if (stock_availability_in_us === 'false') stockAvailability = false;
+
+            const result = await ProductManager.getBySubcategory(
+                subcategoryId,
+                parseInt(page),
+                parseInt(limit),
+                productCerts,
+                supplierCerts,
+                manufacturer_location,
+                stockAvailability
+            );
+
+            if ((!result) || result.data.length === 0) {
                 return res.status(ErrorCodes.SUCCESS).json({
                     success: true,
                     message: "No products found for this category.",
-                    data: []
+                    data: [],
+                    totalPages: 0,
+                    totalItems: 0
                 });
             }
 
             return res.status(ErrorCodes.SUCCESS).json({
                 success: true,
-                data: products
+                data: result.data,
+                page: result.pagination.page,
+                limit: result.pagination.limit,
+                totalPages: result.pagination.totalPages,
+                totalItems: result.pagination.totalItems
             });
 
         } catch (error) {
