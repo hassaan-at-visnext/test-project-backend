@@ -11,7 +11,8 @@ class ProductController {
                 product_certifications,
                 supplier_certifications,
                 manufacturer_location,
-                stock_availability_in_us
+                stock_availability_in_us,
+                moq
             } = req.query;
 
             // Normalize product_certifications
@@ -35,13 +36,20 @@ class ProductController {
             if (stock_availability_in_us === 'true') stockAvailability = true;
             else if (stock_availability_in_us === 'false') stockAvailability = false;
 
+            // Parse MOQ - only if it's a valid integer
+            let moqValue = null;
+            if (moq && !isNaN(parseInt(moq)) && Number.isInteger(Number(moq))) {
+                moqValue = parseInt(moq);
+            }
+
             const result = await ProductManager.getAllProducts(
                 parseInt(page),
                 parseInt(limit),
                 productCerts,
                 supplierCerts,
                 manufacturer_location,
-                stockAvailability
+                stockAvailability,
+                moqValue
             );
 
             if ((!result) || result.length === 0) {
@@ -141,7 +149,8 @@ class ProductController {
                 product_certifications,
                 supplier_certifications,
                 manufacturer_location,
-                stock_availability_in_us
+                stock_availability_in_us,
+                moq
             } = req.query;
 
             let productCerts = [];
@@ -162,6 +171,12 @@ class ProductController {
             if (stock_availability_in_us === 'true') stockAvailability = true;
             else if (stock_availability_in_us === 'false') stockAvailability = false;
 
+            // Parse MOQ - only if it's a valid integer
+            let moqValue = null;
+            if (moq && !isNaN(parseInt(moq)) && Number.isInteger(Number(moq))) {
+                moqValue = parseInt(moq);
+            }
+
             const result = await ProductManager.getByCategory(
                 categoryId,
                 parseInt(page),
@@ -169,7 +184,8 @@ class ProductController {
                 productCerts,
                 supplierCerts,
                 manufacturer_location,
-                stockAvailability
+                stockAvailability,
+                moqValue
             );
 
             if ((!result) || result.data.length === 0) {
@@ -211,7 +227,8 @@ class ProductController {
                 product_certifications,
                 supplier_certifications,
                 manufacturer_location,
-                stock_availability_in_us
+                stock_availability_in_us,
+                moq
             } = req.query;
 
             // Normalize product_certifications
@@ -235,6 +252,12 @@ class ProductController {
             if (stock_availability_in_us === 'true') stockAvailability = true;
             else if (stock_availability_in_us === 'false') stockAvailability = false;
 
+            // Parse MOQ - only if it's a valid integer
+            let moqValue = null;
+            if (moq && !isNaN(parseInt(moq)) && Number.isInteger(Number(moq))) {
+                moqValue = parseInt(moq);
+            }
+
             const result = await ProductManager.getBySubcategory(
                 subcategoryId,
                 parseInt(page),
@@ -242,7 +265,8 @@ class ProductController {
                 productCerts,
                 supplierCerts,
                 manufacturer_location,
-                stockAvailability
+                stockAvailability,
+                moqValue
             );
 
             if ((!result) || result.data.length === 0) {

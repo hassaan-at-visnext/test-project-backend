@@ -1,9 +1,9 @@
 const ProductHandler = require("../../handlers/ProductHandler");
 
 class ProductManager {
-    static async getAllProducts(page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availablity_in_us) {
+    static async getAllProducts(page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availablity_in_us, moq) {
         console.log(`search:: Fetching all the products...`);
-        return await ProductHandler.getAllProducts(page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availablity_in_us);
+        return await ProductHandler.getAllProducts(page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availablity_in_us, moq);
     }
 
     static async search(categoryId, productName, page, limit) {
@@ -16,14 +16,14 @@ class ProductManager {
         return await ProductHandler.fetchById(productId);
     }
 
-    static async getByCategory(categoryId, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us) {
+    static async getByCategory(categoryId, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us, moq) {
         console.log(`getByCategory:: Fetching products for category ${categoryId}`);
-        return await ProductHandler.fetchByCategory(categoryId, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us);
+        return await ProductHandler.fetchByCategory(categoryId, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us, moq);
     }
 
-    static async getBySubcategory(subcategoryId, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us) {
+    static async getBySubcategory(subcategoryId, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us, moq) {
         console.log(`getBySubcategory:: Fetching products for subcategory/type ${subcategoryId}`);
-        return await ProductHandler.fetchBySubcategory(subcategoryId, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us);
+        return await ProductHandler.fetchBySubcategory(subcategoryId, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us, moq);
     }
 }
 
