@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 const { Product, Subcategory } = db;
 
 class ProductHandler {
-    static async getAllProducts(page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us, moq) {
+    static async getAllProducts(page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us, moq, priceFrom, priceTo) {
         const offset = (Number(page) - 1) * Number(limit);
         const whereClause = {};
 
@@ -31,6 +31,13 @@ class ProductHandler {
         if (moq !== null && typeof moq === 'number') {
             whereClause.moq = {
                 [Op.lte]: moq
+            };
+        }
+
+        // Add price range filter
+        if (priceFrom !== null && priceTo !== null) {
+            whereClause.price = {
+                [Op.between]: [priceFrom, priceTo]
             };
         }
 
@@ -89,7 +96,7 @@ class ProductHandler {
         return product ? product.get({ plain: true }) : null;
     }
 
-    static async fetchByCategory(categoryId, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us, moq) {
+    static async fetchByCategory(categoryId, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us, moq, priceFrom, priceTo) {
         const offset = (Number(page) - 1) * Number(limit);
         const whereClause = {};
 
@@ -116,6 +123,13 @@ class ProductHandler {
         if (moq !== null && typeof moq === 'number') {
             whereClause.moq = {
                 [Op.lte]: moq
+            };
+        }
+
+        // Add price range filter
+        if (priceFrom !== null && priceTo !== null) {
+            whereClause.price = {
+                [Op.between]: [priceFrom, priceTo]
             };
         }
 
@@ -146,7 +160,7 @@ class ProductHandler {
         };
     }
 
-    static async fetchBySubcategory(subcategoryId, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us, moq) {
+    static async fetchBySubcategory(subcategoryId, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us, moq, priceFrom, priceTo) {
         const offset = (Number(page) - 1) * Number(limit);
         const whereClause = { subcategory_id: subcategoryId };
 
@@ -173,6 +187,13 @@ class ProductHandler {
         if (moq !== null && typeof moq === 'number') {
             whereClause.moq = {
                 [Op.lte]: moq
+            };
+        }
+
+        // Add price range filter
+        if (priceFrom !== null && priceTo !== null) {
+            whereClause.price = {
+                [Op.between]: [priceFrom, priceTo]
             };
         }
 

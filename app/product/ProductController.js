@@ -12,7 +12,9 @@ class ProductController {
                 supplier_certifications,
                 manufacturer_location,
                 stock_availability_in_us,
-                moq
+                moq,
+                from = 0,
+                to = 5000
             } = req.query;
 
             // Normalize product_certifications
@@ -42,6 +44,10 @@ class ProductController {
                 moqValue = parseInt(moq);
             }
 
+            // Parse price range
+            const priceFrom = parseFloat(from) || 0;
+            const priceTo = parseFloat(to) || 5000;
+
             const result = await ProductManager.getAllProducts(
                 parseInt(page),
                 parseInt(limit),
@@ -49,7 +55,9 @@ class ProductController {
                 supplierCerts,
                 manufacturer_location,
                 stockAvailability,
-                moqValue
+                moqValue,
+                priceFrom,
+                priceTo
             );
 
             if ((!result) || result.length === 0) {
@@ -150,7 +158,9 @@ class ProductController {
                 supplier_certifications,
                 manufacturer_location,
                 stock_availability_in_us,
-                moq
+                moq,
+                from = 0,
+                to = 5000
             } = req.query;
 
             let productCerts = [];
@@ -177,6 +187,10 @@ class ProductController {
                 moqValue = parseInt(moq);
             }
 
+            // Parse price range
+            const priceFrom = parseFloat(from) || 0;
+            const priceTo = parseFloat(to) || 5000;
+
             const result = await ProductManager.getByCategory(
                 categoryId,
                 parseInt(page),
@@ -185,7 +199,9 @@ class ProductController {
                 supplierCerts,
                 manufacturer_location,
                 stockAvailability,
-                moqValue
+                moqValue,
+                priceFrom,
+                priceTo
             );
 
             if ((!result) || result.data.length === 0) {
@@ -228,7 +244,9 @@ class ProductController {
                 supplier_certifications,
                 manufacturer_location,
                 stock_availability_in_us,
-                moq
+                moq,
+                from = 0,
+                to = 5000
             } = req.query;
 
             // Normalize product_certifications
@@ -258,6 +276,10 @@ class ProductController {
                 moqValue = parseInt(moq);
             }
 
+            // Parse price range
+            const priceFrom = parseFloat(from) || 0;
+            const priceTo = parseFloat(to) || 5000;
+
             const result = await ProductManager.getBySubcategory(
                 subcategoryId,
                 parseInt(page),
@@ -266,7 +288,9 @@ class ProductController {
                 supplierCerts,
                 manufacturer_location,
                 stockAvailability,
-                moqValue
+                moqValue,
+                priceFrom,
+                priceTo
             );
 
             if ((!result) || result.data.length === 0) {
