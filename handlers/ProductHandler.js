@@ -63,41 +63,58 @@ class ProductHandler {
         };
     }
 
-    // static async search(categoryId, productName, page, limit) {
-    //     const offset = (page - 1) * limit;
-
-    //     const whereCondition = {};
-
-    //     if (productName) {
-    //         whereCondition.name = {
-    //             [Op.iLike]: `%${productName}%`  // Case-insensitive partial match
-    //         };
-    //     }
-
-    //     const products = await Product.findAll({
-    //         where: whereCondition,
-    //         include: [
-    //             {
-    //                 model: Subcategory,
-    //                 where: { category_id: categoryId },
-    //                 attributes: []
-    //             }
-    //         ],
-    //         offset: parseInt(offset),
-    //         limit: parseInt(limit),
-    //         order: [["created_at", "DESC"]]
-    //     });
-
-    //     return products.map(p => p.get({ plain: true }));
-    // }
-
-    static async search(categoryId, productName, page, limit) {
+    static async search(
+        categoryId,
+        productName,
+        page,
+        limit,
+        productCertifications,
+        supplierCertifications,
+        manufacturer_location,
+        stock_availability_in_us,
+        moq,
+        priceFrom,
+        priceTo
+    ) {
         const offset = (page - 1) * limit;
 
         const whereCondition = {};
+
         if (productName) {
             whereCondition.name = {
                 [Op.iLike]: `%${productName}%`
+            };
+        }
+
+        if (manufacturer_location) {
+            whereCondition.manufacturer_location = manufacturer_location;
+        }
+
+        if (stock_availability_in_us !== null && typeof stock_availability_in_us === 'boolean') {
+            whereCondition.stock_availability_in_us = stock_availability_in_us;
+        }
+
+        if (productCertifications && productCertifications.length > 0) {
+            whereCondition.product_certifications = {
+                [Op.contains]: productCertifications
+            };
+        }
+
+        if (supplierCertifications && supplierCertifications.length > 0) {
+            whereCondition.supplier_certifications = {
+                [Op.contains]: supplierCertifications
+            };
+        }
+
+        if (moq !== null && typeof moq === 'number') {
+            whereCondition.moq = {
+                [Op.lte]: moq
+            };
+        }
+
+        if (priceFrom !== null && priceTo !== null) {
+            whereCondition.price = {
+                [Op.between]: [priceFrom, priceTo]
             };
         }
 
@@ -106,11 +123,11 @@ class ProductHandler {
             include: [
                 {
                     model: Subcategory,
-                    required: true, 
+                    required: true,
                     where: {
                         category_id: categoryId
                     },
-                    attributes: [] 
+                    attributes: []
                 }
             ],
             offset: parseInt(offset),
@@ -120,6 +137,7 @@ class ProductHandler {
 
         return products.map(p => p.get({ plain: true }));
     }
+
 
     static async fetchById(productId) {
         const product = await Product.findOne({ where: { product_id: productId } });

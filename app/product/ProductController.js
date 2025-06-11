@@ -91,10 +91,49 @@ class ProductController {
 
     static async search(req, res) {
         try {
-            const { productName, page = 1, limit = 10 } = req.query;
+            const {
+                productName,
+                page = 1,
+                limit = 10,
+                product_certifications,
+                supplier_certifications,
+                manufacturer_location,
+                stock_availability_in_us,
+                moq,
+                from = 0,
+                to = 5000
+            } = req.query;
             const { categoryId } = req.params;
 
-            const products = await ProductManager.search(categoryId, productName, page, limit);
+            // Normalize filters just like getAllProducts
+            let productCerts = typeof product_certifications === 'string' ? product_certifications.split(',') : product_certifications || [];
+            let supplierCerts = typeof supplier_certifications === 'string' ? supplier_certifications.split(',') : supplier_certifications || [];
+
+            let stockAvailability = null;
+            if (stock_availability_in_us === 'true') stockAvailability = true;
+            else if (stock_availability_in_us === 'false') stockAvailability = false;
+
+            let moqValue = null;
+            if (moq && !isNaN(parseInt(moq)) && Number.isInteger(Number(moq))) {
+                moqValue = parseInt(moq);
+            }
+
+            const priceFrom = parseFloat(from) || 0;
+            const priceTo = parseFloat(to) || 5000;
+
+            const products = await ProductManager.search(
+                categoryId,
+                productName,
+                page,
+                limit,
+                productCerts,
+                supplierCerts,
+                manufacturer_location,
+                stockAvailability,
+                moqValue,
+                priceFrom,
+                priceTo
+            );
 
             if ((!products) || products.length === 0) {
                 return res.status(ErrorCodes.SUCCESS).json({
@@ -108,16 +147,16 @@ class ProductController {
                 success: true,
                 data: products
             });
+
         } catch (error) {
-
             console.log(`search:: request to search the product failed. data:: ${error}`);
-
             return res.status(Validators.validateCode(error.code, ErrorCodes.INTERNAL_SERVER_ERROR)).json({
                 success: false,
                 message: error.reportError ? error.message : ProductConstants.Messages.PRODUCT_SEARCH_FAILED
             });
         }
     }
+
 
     static async getById(req, res) {
         try {

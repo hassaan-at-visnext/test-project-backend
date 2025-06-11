@@ -6,9 +6,9 @@ class ProductManager {
         return await ProductHandler.getAllProducts(page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availablity_in_us, moq, priceFrom, priceTo);
     }
 
-    static async search(categoryId, productName, page, limit) {
-        console.log(`seach:: Fetching product by name ${productName} and category ${categoryId} `);
-        return await ProductHandler.search(categoryId, productName, page, limit);
+    static async search(categoryId, productName, page, limit, productCerts, supplierCerts, manufacturer_location, stock_availability_in_us, moq, priceFrom, priceTo) {
+        console.log(`search:: Fetching product by name ${productName} and category ${categoryId}`);
+        return await ProductHandler.search(categoryId, productName, page, limit, productCerts, supplierCerts, manufacturer_location, stock_availability_in_us, moq, priceFrom, priceTo);
     }
 
     static async getById(productId) {
