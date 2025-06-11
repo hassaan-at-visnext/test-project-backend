@@ -266,6 +266,73 @@ class ProductHandler {
             }
         };
     }
+
+    static async fetchBySubcategoryAndChildren(parentSubcategoryId, childSubcategoryIds, page, limit, product_certifications, supplier_certifications, manufacturer_location, stock_availability_in_us, moq, priceFrom, priceTo) {
+        const offset = (Number(page) - 1) * Number(limit);
+
+        // Include both parent and child subcategories in the query
+        const subcategoryIds = [parentSubcategoryId, ...childSubcategoryIds];
+
+        const whereClause = {
+            subcategory_id: {
+                [Op.in]: subcategoryIds
+            }
+        };
+
+        if (manufacturer_location) {
+            whereClause.manufacturer_location = manufacturer_location;
+        }
+
+        if (stock_availability_in_us !== null && typeof stock_availability_in_us === 'boolean') {
+            whereClause.stock_availability_in_us = stock_availability_in_us;
+        }
+
+        if (product_certifications && product_certifications.length > 0) {
+            whereClause.product_certifications = {
+                [Op.contains]: product_certifications
+            };
+        }
+
+        if (supplier_certifications && supplier_certifications.length > 0) {
+            whereClause.supplier_certifications = {
+                [Op.contains]: supplier_certifications
+            };
+        }
+
+        if (moq !== null && typeof moq === 'number') {
+            whereClause.moq = {
+                [Op.lte]: moq
+            };
+        }
+
+        // Add price range filter
+        if (priceFrom !== null && priceTo !== null) {
+            whereClause.price = {
+                [Op.between]: [priceFrom, priceTo]
+            };
+        }
+
+        const result = await Product.findAndCountAll({
+            where: whereClause,
+            offset: parseInt(offset),
+            limit: parseInt(limit),
+            order: [["created_at", "DESC"]]
+        });
+
+        const products = result.rows.map(p => p.get({ plain: true }));
+        const totalItems = result.count;
+        const totalPages = Math.ceil(totalItems / limit);
+
+        return {
+            data: products,
+            pagination: {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                totalPages,
+                totalItems
+            }
+        };
+    }
 }
 
 module.exports = ProductHandler;
