@@ -63,14 +63,41 @@ class ProductHandler {
         };
     }
 
+    // static async search(categoryId, productName, page, limit) {
+    //     const offset = (page - 1) * limit;
+
+    //     const whereCondition = {};
+
+    //     if (productName) {
+    //         whereCondition.name = {
+    //             [Op.iLike]: `%${productName}%`  // Case-insensitive partial match
+    //         };
+    //     }
+
+    //     const products = await Product.findAll({
+    //         where: whereCondition,
+    //         include: [
+    //             {
+    //                 model: Subcategory,
+    //                 where: { category_id: categoryId },
+    //                 attributes: []
+    //             }
+    //         ],
+    //         offset: parseInt(offset),
+    //         limit: parseInt(limit),
+    //         order: [["created_at", "DESC"]]
+    //     });
+
+    //     return products.map(p => p.get({ plain: true }));
+    // }
+
     static async search(categoryId, productName, page, limit) {
         const offset = (page - 1) * limit;
 
         const whereCondition = {};
-
         if (productName) {
             whereCondition.name = {
-                [Op.iLike]: `%${productName}%`  // Case-insensitive partial match
+                [Op.iLike]: `%${productName}%`
             };
         }
 
@@ -79,8 +106,11 @@ class ProductHandler {
             include: [
                 {
                     model: Subcategory,
-                    where: { category_id: categoryId },
-                    attributes: []
+                    required: true, 
+                    where: {
+                        category_id: categoryId
+                    },
+                    attributes: [] 
                 }
             ],
             offset: parseInt(offset),
