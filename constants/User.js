@@ -1,6 +1,7 @@
 const User = Object.freeze({
 
   Messages: {
+    TOKEN_IS_MISSING_OR_INVALID: 'Token is missing or invalid',
     INAVLID_FIRST_NAME: "Invalid first name provided",
     INVALID_LAST_NAME: "Invalid last name provided",
     INVALID_COMPANY_NAME: "Invalid company name provided",

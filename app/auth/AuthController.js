@@ -44,6 +44,26 @@ class AuthContoller {
       });
     }
   }
+
+  static async me(req, res) {
+    try {
+      const user = req.user;
+      
+      return res.status(ErrorCodes.SUCCESS).json({
+        success: true,
+        data: user
+      });
+
+    } catch (error) {
+
+      console.log(`me:: Request to get user details failed. data:: \n${req.user}\n${error}`);
+
+      return res.status(Validators.validateCode(error.code, ErrorCodes.INTERNAL_SERVER_ERROR)).json({
+        success: false,
+        message: error.reportError ? error.message : UserConstants.Messages.GET_USER_FAILED
+      });
+    }
+  }
 }
 
 module.exports = AuthContoller;

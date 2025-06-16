@@ -4,24 +4,24 @@ const { Validators, Token, config } = require("../helpers");
 const Exception = require("../helpers/Exceptions");
 
 class Authentication {
-  static async Authenticate(req, res, next) {
+  static async authenticate(req, res, next) {
     try {
       const token = req.headers.authorization;
       if (!token || (!Validators.isValidStr(token))) {
-        console.log(`authentication:: Token is invalid. token:: ${token}`);
-        throw new Exception(UserConstants.Messages.INVALID_AUTHENTICATION_TOKEN, ErrorCodes.CONFLICK_WITH_CURRENT_STATE, { reportError: true }).toJson();
+        console.log('authentication:: Token is not provided');
+        throw new Exception(UserConstants.Messages.TOKEN_IS_MISSING_OR_INVALID, ErrorCodes.UNAUTHORIZED, { reportError: true }).toJson();
       }
 
       const decoded = Token.verifyToken(token, config.secretKey);
       if (!decoded) {
         console.log(`authenticate:: Token is invalid or expired. token:: ${token}`);
-        throw new Exception(UserConstants.Messages.INVALID_AUTHENTICATION_TOKEN, ErrorCodes.CONFLICK_WITH_CURRENT_STATE, { reportError: true }).toJson();
+        throw new Exception(UserConstants.Messages.INVALID_AUTHENTICATION_TOKEN, ErrorCodes.UNAUTHORIZED, { reportError: true }).toJson();
       }
 
       const user = await UserHandler.getAuthenticatedUser(decoded);
       if (!user) {
         console.log(`authentication:: Token is invalid, no user found. token:: ${token}`);
-        throw new Exception(UserConstants.Messages.INVALID_AUTHENTICATION_TOKEN, ErrorCodes.CONFLICK_WITH_CURRENT_STATE, { reportError: true }).toJson();
+        throw new Exception(UserConstants.Messages.INVALID_AUTHENTICATION_TOKEN, ErrorCodes.UNAUTHORIZED, { reportError: true }).toJson();
       }
 
       req.user = user;
@@ -29,11 +29,11 @@ class Authentication {
       next();
 
     } catch (error) {
-      console.log(`authentication:: authorization failed. error:: ${error}`);
+      console.log(`authentication:: authorization failed. error:: ${error.message}`);
 
-      return res.status(ErrorCodes.CONFLICK_WITH_CURRENT_STATE).json({
+      return res.status(error.code || 500).json({
         success: false,
-        message: UserConstants.Messages.INVALID_AUTHENTICATION_TOKEN
+        message: error.message || 'Authorization failed',
       });
     }
   }
