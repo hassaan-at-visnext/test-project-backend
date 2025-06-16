@@ -47,8 +47,9 @@ class AuthContoller {
 
   static async me(req, res) {
     try {
-      const user = req.user;
-      
+      // const user = req.user;
+
+      const user = await AuthManager.me(req.user);
       return res.status(ErrorCodes.SUCCESS).json({
         success: true,
         data: user

@@ -95,6 +95,13 @@ class AuthUtil {
     return originalPassword;
   }
 
+  static deletePasswordFromUser(user) {
+    if (user?.password) {
+      user.password = undefined;
+      return user;
+    }
+    return user;
+  }
 }
 
 module.exports = AuthUtil;

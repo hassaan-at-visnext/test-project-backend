@@ -59,6 +59,11 @@ class AuthManager {
     return user;
   }
 
+  static async me(user) {
+    console.log(`me:: Request to get user details. user:: ${user}`);
+
+    return AuthUtil.deletePasswordFromUser(user); 
+  }
 }
 
 module.exports = AuthManager;
