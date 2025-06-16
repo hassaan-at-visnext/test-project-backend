@@ -1,44 +1,49 @@
 const { CategoriesHandler } = require("../../handlers");
+const CategoriesUtil = require("../../utilities/CategoriesUtil");
 
 class categoriesManager {
-    static async search(name) {
-        console.log('search:: Request to search all categories/subcategories');
-        
-        const categories = await CategoriesHandler.searchCategories(name);
-        const subcategories = await CategoriesHandler.searchSubcategories(name);
-        
-        const filteredCategories = categories.map(category => {
-            const filteredSubcategories = category.subcategories
-                ? category.subcategories.filter(sub => sub.name.toLowerCase().includes(name.toLowerCase()))
-                : [];
+  static async search(name) {
+    console.log('search:: Request to search all categories/subcategories');
+    CategoriesUtil.validateName(name);
 
-            return {
-                ...category.get({ plain: true }),
-                subcategories: filteredSubcategories.map(sub => sub.get({ plain: true }))
-            };
-        });
+    const categories = await CategoriesHandler.searchCategories(name);
+    const subcategories = await CategoriesHandler.searchSubcategories(name);
 
-        return {
-            categories: filteredCategories,
-            subcategories: subcategories.map(sc => sc.get({ plain: true }))
-        };
-    }
+    const filteredCategories = categories.map(category => {
+      const filteredSubcategories = category.subcategories
+        ? category.subcategories.filter(sub => sub.name.toLowerCase().includes(name.toLowerCase()))
+        : [];
 
-    static async getAllCategories() {
-        console.log(`getAllCategories:: Request to get all the categories.`);
+      return {
+        ...category.get({ plain: true }),
+        subcategories: filteredSubcategories.map(sub => sub.get({ plain: true }))
+      };
+    });
 
-        const categories = await CategoriesHandler.getAllCategories();
-        
-        return categories.map(category => category.get({ plain: true }));
-    }
+    const result = {
+      categories: filteredCategories,
+      subcategories: subcategories.map(sc => sc.get({ plain: true }))
+    };
+    CategoriesUtil.validateResult(result);
 
-    static async getAllCategoriesSubcategories() {
-        console.log(`getAllCategoriesSubcategories:: Request to get all the categories and subcategories.`);
-        
-        const categories = await CategoriesHandler.getAllCategoriesAndSubcategories();
-        
-        return categories.map(category => category.get({ plain: true }));
-    }
+    return result;
+  }
+
+  static async getAllCategories() {
+    console.log(`getAllCategories:: Request to get all the categories.`);
+
+    const categories = await CategoriesHandler.getAllCategories();
+
+    return categories.map(category => category.get({ plain: true }));
+  }
+
+  static async getAllCategoriesSubcategories() {
+    console.log(`getAllCategoriesSubcategories:: Request to get all the categories and subcategories.`);
+
+    const categories = await CategoriesHandler.getAllCategoriesAndSubcategories();
+
+    return categories.map(category => category.get({ plain: true }));
+  }
 }
 
 module.exports = categoriesManager;

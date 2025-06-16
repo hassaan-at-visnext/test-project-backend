@@ -8,6 +8,4 @@ router.get("/search", Authentication.Authenticate, CategoriesController.Search);
 
 router.get("/", Authentication.Authenticate, CategoriesController.AllCategories);
 
-// router.get("-subcategories", Authentication.Authenticate, CategoriesController.CategoriesSubcategories);
-
 module.exports = router;

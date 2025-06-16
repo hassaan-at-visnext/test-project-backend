@@ -21,7 +21,6 @@ const sequelize = new Sequelize(
 
 const modelsPath = path.join(__dirname, '../models');
 
-// fs.readdirSync('./models')
 fs.readdirSync(modelsPath)
   .filter((file) => {
     return (
@@ -33,7 +32,6 @@ fs.readdirSync(modelsPath)
     );
   })
   .forEach((file) => {
-    // const model = require(path.join('../models', file))(
     const model = require(path.join(modelsPath, file))( 
     sequelize,
       Sequelize.DataTypes

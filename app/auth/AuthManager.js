@@ -7,57 +7,57 @@ const bcrypt = require("bcrypt");
 
 class AuthManager {
 
-    static async signup(data) {
-        console.log(`signup:: Request to signup user. data:: ${data}`);
-        AuthUtil.validateSignupRequest(data);
+  static async signup(data) {
+    console.log(`signup:: Request to signup user. data:: ${data}`);
+    AuthUtil.validateSignupRequest(data);
 
-        let user = await UserHandler.findUserByEmail(data.email);
-        AuthUtil.validateUserForSignUp(user);
+    let user = await UserHandler.findUserByEmail(data.email);
+    AuthUtil.validateUserForSignUp(user);
 
-        const decryptedPassword = AuthUtil.decryptPassword(data.password);
+    const decryptedPassword = AuthUtil.decryptPassword(data.password);
 
-        data.password = await AuthUtil.createHashedPassword(decryptedPassword);
-        user = await UserHandler.createUser(data);
+    data.password = await AuthUtil.createHashedPassword(decryptedPassword);
+    user = await UserHandler.createUser(data);
 
-        user = await AuthManager.setToken(user);
-        return user;
+    user = await AuthManager.setToken(user);
+    return user;
+  }
+
+  static async login(data) {
+    console.log(`login:: Request to login user. data:: ${data}`);
+    AuthUtil.validateLoginRequest(data);
+
+    let user = await UserHandler.findUserByEmail(data.email);
+    AuthUtil.validateUserForLogin(user);
+
+    const decryptedPassword = AuthUtil.decryptPassword(data.password);
+
+    const PasswordMatched = await bcrypt.compare(decryptedPassword, user.password);
+    if (!PasswordMatched) {
+      console.log(`login:: Password does not match.`);
+      throw new Exception(UserConstants.Messages.PASSWORD_DOESNOT_MATCH, ErrorCodes.UNAUTHORIZED, { reportError: true }).toJson();
     }
 
-    static async login(data) {
-        console.log(`login:: Request to login user. data:: ${data}`);
-        AuthUtil.validateLoginRequest(data);
+    // AuthUtil.validatePasswordForLogin(data.password, user.password);
 
-        let user = await UserHandler.findUserByEmail(data.email);
-        AuthUtil.validateUserForLogin(user);
+    user = await AuthManager.setToken(user);
+    return user;
 
-        const decryptedPassword = AuthUtil.decryptPassword(data.password);
+  }
 
-        const PasswordMatched = await bcrypt.compare(decryptedPassword, user.password);
-        if (!PasswordMatched) {
-            console.log(`login:: Password does not match.`);
-            throw new Exception(UserConstants.Messages.PASSWORD_DOESNOT_MATCH, ErrorCodes.UNAUTHORIZED, { reportError: true }).toJson();
-        }
+  static async setToken(user) {
+    console.log(`setToken:: Setting access token of user. user:: ${user}`);
 
-        // AuthUtil.validatePasswordForLogin(data.password, user.password);
+    const loginToken = Token.getLoginToken(user);
 
-        user = await AuthManager.setToken(user);
-        return user;
+    const [_, [updatedUser]] = await UserHandler.setLoginToken(user.user_id, loginToken);
 
-    }
+    user = UserUtil.updateUserData(updatedUser.toJSON());
 
-    static async setToken(user) {
-        console.log(`setToken:: Setting access token of user. user:: ${user}`);
+    console.log(`setAccessToken:: access token of user successfully set. user:: ${user}`);
 
-        const loginToken = Token.getLoginToken(user);
-
-        const [_, [updatedUser]] = await UserHandler.setLoginToken(user.user_id, loginToken);
-
-        user = UserUtil.updateUserData(updatedUser.toJSON());
-
-        console.log(`setAccessToken:: access token of user successfully set. user:: ${user}`);
-
-        return user;
-    }
+    return user;
+  }
 
 }
 

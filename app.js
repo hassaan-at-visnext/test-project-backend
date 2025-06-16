@@ -28,7 +28,7 @@ const startServer = async () => {
     await db.sequelize.authenticate();
     // await db.sequelize.sync({ force: true });
     console.log('Database connected');
-    
+
   } catch (error) {
     console.log('Database Connection Error', error);
     process.exit(1);

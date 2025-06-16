@@ -3,7 +3,7 @@ const CategoriesHandler = require('./CategoriesHandler');
 const SubcategoriesHandler = require('./SubcategoriesHandler');
 
 module.exports = {
-    UserHandler,
-    CategoriesHandler,
-    SubcategoriesHandler
+  UserHandler,
+  CategoriesHandler,
+  SubcategoriesHandler
 }

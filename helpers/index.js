@@ -7,11 +7,11 @@ const Validators = require("./Validators");
 const Token = require("./Token");
 
 module.exports = {
-    jwt,
-    config,
-    bcrypt,
-    path,
-    db,
-    Validators,
-    Token
+  jwt,
+  config,
+  bcrypt,
+  path,
+  db,
+  Validators,
+  Token
 }
