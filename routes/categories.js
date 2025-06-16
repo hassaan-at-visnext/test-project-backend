@@ -3,24 +3,11 @@ const router = express.Router();
 
 const CategoriesController = require("../app/categories/CategoriesController");
 const { Authentication } = require("../middlewares");
-const CATEGORIES_ROUTES_PREFIX = '/categories';
 
-router.get(
-    `${CATEGORIES_ROUTES_PREFIX}/search`,
-    Authentication.Authenticate,
-    CategoriesController.Search
-);
+router.get("/search", Authentication.Authenticate, CategoriesController.Search);
 
-router.get(
-    `${CATEGORIES_ROUTES_PREFIX}`,
-    Authentication.Authenticate,
-    CategoriesController.AllCategories
-);
+router.get("/", Authentication.Authenticate, CategoriesController.AllCategories);
 
-router.get(
-    `${CATEGORIES_ROUTES_PREFIX}-subcategories`,
-    Authentication.Authenticate,
-    CategoriesController.CategoriesSubcategories
-);
+// router.get("-subcategories", Authentication.Authenticate, CategoriesController.CategoriesSubcategories);
 
 module.exports = router;

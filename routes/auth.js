@@ -1,10 +1,9 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-const AuthContoller = require("../app/auth/AuthController");
-const AUTH_ROUTES_PREFIX = "/auth";
+const AuthController = require("../app/auth/AuthController");
 
-router.post(`${AUTH_ROUTES_PREFIX}/sign-up`, AuthContoller.signup);
-router.post(`${AUTH_ROUTES_PREFIX}/login`, AuthContoller.login);
+router.post("/sign-up", AuthController.signup);
+router.post("/login", AuthController.login);
 
 module.exports = router;
