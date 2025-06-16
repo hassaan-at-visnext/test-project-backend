@@ -6,8 +6,8 @@ const Subcategory = db.Subcategory;
 
 class CategoriesHandler {
 
-    static async Search(name) {
-        const categories = await Category.findAll({
+    static async searchCategories(name) {
+        return await Category.findAll({
             where: {
                 name: {
                     [Op.like]: `%${name}%`
@@ -19,20 +19,10 @@ class CategoriesHandler {
                 required: false,
             }]
         });
+    }
 
-        const filteredCategories = categories.map(category => {
-            const filteredSubcategories = category.subcategories
-                ? category.subcategories.filter(sub => sub.name.toLowerCase().includes(name.toLowerCase()))
-                : [];
-
-            return {
-                ...category.get({ plain: true }),
-                subcategories: filteredSubcategories.map(sub => sub.get({ plain: true }))
-            };
-        });
-
-
-        const subcategories = await Subcategory.findAll({
+    static async searchSubcategories(name) {
+        return await Subcategory.findAll({
             where: {
                 name: {
                     [Op.like]: `%${name}%`
@@ -55,20 +45,14 @@ class CategoriesHandler {
                 }
             ]
         });
-
-        return {
-            categories: filteredCategories,
-            subcategories: subcategories.map(sc => sc.get({ plain: true }))
-        };
     }
 
     static async getAllCategories() {
-        const categories = await Category.findAll();
-        return categories.map(category => category.get({ plain: true }));
+        return await Category.findAll();
     }
 
     static async getAllCategoriesAndSubcategories() {
-        const categories = await Category.findAll({
+        return await Category.findAll({
             include: [{
                 model: Subcategory,
                 as: 'subcategories',
@@ -82,8 +66,6 @@ class CategoriesHandler {
                 [{ model: Subcategory, as: 'subcategories' }, 'subcategory_id', 'ASC']
             ]
         });
-
-        return categories.map(category => category.get({ plain: true }));
     }
 }
 
